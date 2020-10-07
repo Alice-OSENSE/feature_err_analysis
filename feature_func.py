@@ -16,7 +16,7 @@ def get_seg_size(images, threshold=23, pmapxy=None):
         index += 1
 
         if pmapxy is not None:
-            thresh_image = np.multiply(thresh_image, pmapxy)
+            thresh_image = np.multiply(image, pmapxy)
             seg_sizes.append(thresh_image.sum(1).sum(0))
             continue
         seg_sizes.append(cv2.countNonZero(thresh_image))
