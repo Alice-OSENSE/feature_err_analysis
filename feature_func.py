@@ -1,33 +1,43 @@
 import cv2
 import numpy as np
 
+
 def get_seg_size(images, threshold=23, pmapxy=None):
     seg_sizes = []
     index = 0
 
     for image in images:
-        blurred = cv2.GaussianBlur(image, ksize=(5, 5), sigmaX=3, sigmaY=3)
-        ret, thresh_image = cv2.threshold(blurred, threshold, 255, cv2.THRESH_BINARY)
         """
        if index % 10 == 0:
             cv2.imshow("thres", thresh_image)
             cv2.waitKey(0)
 
         """
-
-        if pmapxy is not None:
-            thresh_image.multiply(pmapxy)
-
-        seg_sizes.append(cv2.countNonZero(thresh_image))
         index += 1
 
+        if pmapxy is not None:
+            thresh_image = np.multiply(thresh_image, pmapxy)
+            seg_sizes.append(thresh_image.sum(1).sum(0))
+            continue
+        seg_sizes.append(cv2.countNonZero(thresh_image))
     return seg_sizes
 
 
-def get_seg_parameter(images):
+def get_seg_perimeter(images):
     seg_perimeters = []
+    index = 0
+
     for image in images:
         edge_image = cv2.Canny(image, threshold1=30, threshold2=40)
+        """
+        if index % 10 == 0:
+            cv2.imshow("edge", edge_image)
+            cv2.waitKey(0)
+            cv2.imshow("image", image)
+            cv2.waitKey(0)
+        """
+
         seg_perimeters.append(cv2.countNonZero(edge_image))
+        index += 1
 
     return seg_perimeters
